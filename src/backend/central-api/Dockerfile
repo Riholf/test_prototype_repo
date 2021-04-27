@@ -1,11 +1,12 @@
 # Pull and run linux slim buster os with python
 FROM python:3.8-slim-buster
 
+# install the required python packages on to the os
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
 # copy all files from current directory into the root directory 
 COPY . .
-
-# install the required python packages on to the os
-RUN pip install -r requirements.txt
 
 # expost the container to the the localhost on port 8000: Access this container under http://localhost:8000/, the swagger api under http://localhost:8000/docs
 EXPOSE 8000

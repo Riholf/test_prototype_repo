@@ -42,10 +42,9 @@ async def create_summary(text: Text, summary_length: int=50):
     # get the text from the body
     text = text.text
 
-    url = "http://localhost:8001/summarisation-api"
+    url = "http://host.docker.internal:8001/summarisation-api"
 
     
-
     payload = "{\r\n  \"text\": \"" + text + "\"\r\n}"
 
     headers = {
@@ -54,8 +53,8 @@ async def create_summary(text: Text, summary_length: int=50):
 
     response = requests.request("POST", url, params={'summary_length': summary_length}, headers=headers, data=payload)
 
-    print(response.text)
+    return response.text
 
-# DEBUGGING SETUP
-if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+# # DEBUGGING SETUP
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="127.0.0.1", port=8000)
