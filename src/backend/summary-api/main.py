@@ -7,7 +7,7 @@ import uvicorn
 # With the pydantic basemodel you're able to put data into the body of the request
 from pydantic import BaseModel
 
-# Summarisation Package
+# Summariztion Package
 from gensim.summarization.summarizer import summarize
 
 app = FastAPI()
@@ -16,16 +16,16 @@ app = FastAPI()
 class Text(BaseModel):
     text: str
 
-@app.post("/summarisation-api/")
+@app.post("/summarization-api/")
 async def create_summary(text: Text, summary_length: int=20):
-    """ Create an extractive summarisation with text rank algorithm within the gensim package.
+    """ Create an extractive summarization with text rank algorithm within the gensim package.
 
     Parameters
     ----------
     text : Basemodel
         Basemodel with text that should be summarized.
     summary_length : int
-        Length (in words) of the summarisation. # TODO: Think/read about the restrictions of this parameter
+        Length (in words) of the summarization. # TODO: Think/read about the restrictions of this parameter
     # TODO: Think about other parameters.
 
     Returns

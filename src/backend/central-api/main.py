@@ -21,16 +21,16 @@ class Text(BaseModel):
 async def root():
     return {"message": "Test the swagger API via http://localhost:8000/docs"}
 
-@app.post("/summarisation/")
+@app.post("/summarization/")
 async def create_summary(text: Text, summary_length: int=50):
-    """ Create an extractive summarisation with text rank algorithm within the gensim package.
+    """ Create an extractive summarization with text rank algorithm within the gensim package.
 
     Parameters
     ----------
     text : Basemodel
         Basemodel with text that should be summarized.
     summary_length : int
-        Length (in words) of the summarisation. # TODO: Think/read about the restrictions of this parameter
+        Length (in words) of the summarization. # TODO: Think/read about the restrictions of this parameter
     # TODO: Think about other parameters.
 
     Returns
@@ -42,7 +42,7 @@ async def create_summary(text: Text, summary_length: int=50):
     # get the text from the body
     text = text.text
 
-    url = "http://host.docker.internal:8001/summarisation-api"
+    url = "http://summary-api:8001/summarization-api/"
 
     
     payload = "{\r\n  \"text\": \"" + text + "\"\r\n}"
