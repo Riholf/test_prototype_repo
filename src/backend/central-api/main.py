@@ -44,14 +44,11 @@ async def create_summary(text: Text, summary_length: int=50):
 
     url = "http://summary-api:8001/summarization-api/"
 
-    
-    payload = "{\r\n  \"text\": \"" + text + "\"\r\n}"
-
-    headers = {
-    'Content-Type': 'application/json'
+    body = {
+        "text": text
     }
 
-    response = requests.request("POST", url, params={'summary_length': summary_length}, headers=headers, data=payload)
+    response = requests.request("POST", url, params={'summary_length': summary_length}, json = body) #headers=headers#data=payload)
 
     return response.text
 
