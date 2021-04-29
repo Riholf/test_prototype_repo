@@ -1,5 +1,7 @@
 # FastAPI is our webframework for the REST API
 from fastapi import FastAPI
+# required so that frontend can communicate with backend
+from fastapi.middleware.cors import CORSMiddleware
 
 # Import uvicorn to start the server which runs the fastapi webframework 
 import uvicorn
@@ -12,6 +14,19 @@ import requests
 
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:8002",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # define class to put text in body
 class Text(BaseModel):
