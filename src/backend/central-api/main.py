@@ -1,66 +1,78 @@
 
+# uvicorn is required if you want do debug your API before containerization
+# >> starts server on localhost
+import uvicorn
+
+# requests is required to send http requests (e.g. GET, POST) to a REST API
+import requests
+
+# import FastAPI framework to build the API
 from fastapi import FastAPI, Request, Form
+
+# import further components of FastAPI
+# >> Jinja2Template, HTMLResponse: required for frontend
+# >> StaticFiles: required to serve static files (css-file in our case)
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-# Import uvicorn to start the server which runs the fastapi webframework 
-import uvicorn
 
-# With the pydantic basemodel you're able to put data into the body of the request
-from pydantic import BaseModel
-
-# With requests you're able to send get, http requests to an rest api
-import requests
-
-
-#IMPORTANT: code wird heute noch von mir (yannick) kommentiert
-
+# create FastAPI-object
 app = FastAPI()
 
+# mount folder "/static" to FastAPI-object to serve files in this folder
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# determine directory for frontend templates
 templates = Jinja2Templates(directory="templates")
 
-# define class to put text in body
-class Text(BaseModel):
-    text: str
 
+# specify root-message when opening the summarization-API-localhost
 @app.get("/")
 async def root():
-    return {"message": "Test the swagger API via http://localhost:8000/docs"}
+    return {"message": """Test the swagger API via http://localhost:8000/docs
+    and the frontend via http://localhost:8000/summarization_app"""}
 
-@app.get("/summarization/form", response_class=HTMLResponse)
+# initialize GET-request for initial frontend based on item.html in /templates
+@app.get("/summarization_app", response_class=HTMLResponse)
 async def summarization(request: Request):
     summary = "Please insert some text in the input-box."
     return templates.TemplateResponse("item.html", context={"request": request, "summary": summary})
 
-@app.post("/summarization/form", response_class=HTMLResponse)
+# POST-request to send data from frontend to the summarization microservice
+# via the central-API
+@app.post("/summarization_app", response_class=HTMLResponse)
 async def summarization(request: Request, txt: str = Form(...), length: int = Form(...)): 
 
-    """ Create an extractive summarization with text rank algorithm within the gensim package.
-
+    """
     Parameters
     ----------
-    text : Basemodel
-        Basemodel with text that should be summarized.
-    summary_length : int
-        Length (in words) of the summarization. # TODO: Think/read about the restrictions of this parameter
-    # TODO: Think about further parameters.
+    request: will return a template
+    txt: text to be summarized submitted from the frontend
+    length: length (in words) of the summarization
 
     Returns
     -------
-    summary : str
-        Returns the inferred summary.
+    summary: returns the inferred summary
     """
 
+    # specify the URL that the POST-request needs to be sent to
+    # to receive the summarization 
     url = "http://summary-api:8001/summarization-api/"
 
+    # specify request-body and -parameter to fit summarization-microservice
     body = {"text": txt}
+    parameter = {'summary_length': length}
 
-    response = requests.request("POST", url, params={'summary_length': length}, json = body)
+    # send POST-request to summarization-microservice and save the response
+    response = requests.request("POST", url, params = parameter, json = body)
+
+    # response only shows that the request was successful (or not)
+    # >> the response-body containing the actual text-summary is accessed here
     summary = response.json()
 
+    # return the text-summary embedded in the frontend
+    # >> frontend-template is specified as "item.html" in the /templates-folder
     return templates.TemplateResponse("item.html", context={"request": request, "summary": summary})
 
 
