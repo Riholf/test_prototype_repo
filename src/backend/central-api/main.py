@@ -42,18 +42,17 @@ async def summarization(request: Request):
 # POST-request to send data from frontend to the summarization microservice
 # via the central-API
 @app.post("/summarization_app", response_class=HTMLResponse)
-async def summarization(request: Request, txt: str = Form(...), length: int = Form(...)): 
+async def summarization(request: Request, txt: str = Form(...), ratio: float = Form(...)): 
 
     """
     Parameters
     ----------
-    request: will return a template
-    txt: text to be summarized submitted from the frontend
-    length: length (in words) of the summarization
-
-    Returns
-    -------
-    summary: returns the inferred summary
+    request: Request 
+        Will return a template.
+    txt: str
+        Text to be summarized submitted from the frontend
+    ratio: float
+        Proportion of total number of sentences. If the ratio falls under 1/#(number of sentences) nothing will be returned.
     """
 
     # specify the URL that the POST-request needs to be sent to
@@ -61,11 +60,11 @@ async def summarization(request: Request, txt: str = Form(...), length: int = Fo
     url = "http://summary-api:8001/summarization-api/"
 
     # specify request-body and -parameter to fit summarization-microservice
-    body = {"text": txt}
-    parameter = {'summary_length': length}
+    body = {"text": txt, 
+            "ratio": ratio}
 
     # send POST-request to summarization-microservice and save the response
-    response = requests.request("POST", url, params = parameter, json = body)
+    response = requests.request("POST", url, json = body)
 
     # response only shows that the request was successful (or not)
     # >> the response-body containing the actual text-summary is accessed here

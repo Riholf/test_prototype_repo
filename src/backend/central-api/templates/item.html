@@ -21,11 +21,11 @@
     via the "txt"-tag -->
     Text:<br>
     <textarea name="txt" cols="50" rows="10"></textarea><br><br>
-    Summary Length:<br>
 
+    Summary  length (proportion of total number of sentences):<br>
     <!-- input-box that is linked with the central-API code ("main.py")
-    via the "length"-tag -->
-    <input type="summary length" name="length"/><br><br>
+    via the "ratio"-name -->
+    <input type="number" min="0" max="1" step="0.01" name="ratio" value="0.2"/><br><br>
 
     <!-- the button to submit both values to the POST-request of the central-API
     to the summarization microservice -->

@@ -1,18 +1,18 @@
 # FastAPI is our webframework for the REST API
 from fastapi import FastAPI, Form
 
-# Import uvicorn to start the server which runs the fastapi webframework 
+# import uvicorn to start the server which runs the fastapi webframework 
 import uvicorn
 
-# With the pydantic basemodel you're able to put data into the body of the request
+# with the pydantic basemodel you're able to put data into the body of the request
 from pydantic import BaseModel
 
-# Summariztion Package
+# summariztion Package
 from gensim.summarization.summarizer import summarize # https://radimrehurek.com/gensim_3.8.3/summarization/summariser.html
 
 app = FastAPI()
 
-# define class to put text in body
+# BaseModel with text and ratio to define the expected body in the create_summary function 
 class Summary_Data(BaseModel):
     text: str
     ratio: float
@@ -24,22 +24,17 @@ async def create_summary(data: Summary_Data):
 
     Parameters
     ----------
-    text : Basemodel
-        Basemodel with text that should be summarized.
-    summary_length : int
-        Length (in words) of the summarization. # TODO: Think/read about the restrictions of this parameter
-    # TODO: Think about other parameters.
+    data : Basemodel
+        Basemodel with text that should be summarized and the additional ratio parameter.
 
     Returns
     -------
-    summary : str
+    result : str
         Returns the inferred summary.
     """
-    # get the text and parameter from the body
-    text = data.text
-    ratio = data.ratio
 
-    result = summarize(text=text, ratio=ratio)
+    # get the summary with the summarize function
+    result = summarize(text=data.text, ratio=data.ratio)
     
     return result
 
