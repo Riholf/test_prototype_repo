@@ -1,10 +1,4 @@
 version: '3.7'
-# networks:
-#   static-network:
-#     ipam:
-#       config:
-#         - subnet: 172.23.0.0/16
-
 
 #########################################
 # Services communicating in the backend #
