@@ -1,7 +1,8 @@
-# FastAPI is our webframework for the REST API
-from fastapi import FastAPI
-# required so that frontend can communicate with backend
-from fastapi.middleware.cors import CORSMiddleware
+
+from fastapi import FastAPI, Request, Form
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 # Import uvicorn to start the server which runs the fastapi webframework 
 import uvicorn
@@ -13,16 +14,13 @@ from pydantic import BaseModel
 import requests
 
 
+#IMPORTANT: code wird heute noch von mir (yannick) kommentiert
+
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
+templates = Jinja2Templates(directory="templates")
 
 # define class to put text in body
 class Text(BaseModel):
@@ -32,8 +30,14 @@ class Text(BaseModel):
 async def root():
     return {"message": "Test the swagger API via http://localhost:8000/docs"}
 
-@app.post("/summarization/")
-async def create_summary(text: Text, summary_length: int=50):
+@app.get("/summarization/form", response_class=HTMLResponse)
+async def summarization(request: Request):
+    summary = "Please insert some text in the input-box."
+    return templates.TemplateResponse("item.html", context={"request": request, "summary": summary})
+
+@app.post("/summarization/form", response_class=HTMLResponse)
+async def summarization(request: Request, txt: str = Form(...), length: int = Form(...)): 
+
     """ Create an extractive summarization with text rank algorithm within the gensim package.
 
     Parameters
@@ -42,7 +46,7 @@ async def create_summary(text: Text, summary_length: int=50):
         Basemodel with text that should be summarized.
     summary_length : int
         Length (in words) of the summarization. # TODO: Think/read about the restrictions of this parameter
-    # TODO: Think about other parameters.
+    # TODO: Think about further parameters.
 
     Returns
     -------
@@ -50,19 +54,16 @@ async def create_summary(text: Text, summary_length: int=50):
         Returns the inferred summary.
     """
 
-    # get the text from the body
-    text = text.text
-
     url = "http://summary-api:8001/summarization-api/"
 
-    body = {
-        "text": text
-    }
+    body = {"text": txt}
 
-    response = requests.request("POST", url, params={'summary_length': summary_length}, json = body) #headers=headers#data=payload)
+    response = requests.request("POST", url, params={'summary_length': length}, json = body)
+    summary = response.json()
 
-    return response.text
+    return templates.TemplateResponse("item.html", context={"request": request, "summary": summary})
+
 
 # # DEBUGGING SETUP
 # if __name__ == "__main__":
-#     uvicorn.run(app, host="127.0.0.1", port=8000)
+#     uvicorn.run(app, host="127.0.0.1", port=8050)
