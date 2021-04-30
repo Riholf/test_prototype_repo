@@ -1,5 +1,5 @@
 # FastAPI is our webframework for the REST API
-from fastapi import FastAPI
+from fastapi import FastAPI, Form
 
 # Import uvicorn to start the server which runs the fastapi webframework 
 import uvicorn
@@ -8,16 +8,18 @@ import uvicorn
 from pydantic import BaseModel
 
 # Summariztion Package
-from gensim.summarization.summarizer import summarize
+from gensim.summarization.summarizer import summarize # https://radimrehurek.com/gensim_3.8.3/summarization/summariser.html
 
 app = FastAPI()
 
 # define class to put text in body
-class Text(BaseModel):
+class Summary_Data(BaseModel):
     text: str
+    ratio: float
+
 
 @app.post("/summarization-api/")
-async def create_summary(text: Text, summary_length: int=20):
+async def create_summary(data: Summary_Data):
     """ Create an extractive summarization with text rank algorithm within the gensim package.
 
     Parameters
@@ -33,10 +35,11 @@ async def create_summary(text: Text, summary_length: int=20):
     summary : str
         Returns the inferred summary.
     """
-    # get the text from the body
-    text = text.text
+    # get the text and parameter from the body
+    text = data.text
+    ratio = data.ratio
 
-    result = summarize(text, word_count=summary_length)
+    result = summarize(text=text, ratio=ratio)
     
     return result
 
