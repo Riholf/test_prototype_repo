@@ -6,6 +6,7 @@
 
     <meta charset="UTF-8">
     <title>Summarization App</title>
+    <!-- here, style.css from /static-folder is imported -->
     <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
 
 </head>
@@ -16,16 +17,25 @@
 
 <form method="post">
 
+    <!-- input-textbox that is linked with the central-API code ("main.py")
+    via the "txt"-tag -->
     Text:<br>
     <textarea name="txt" cols="50" rows="10"></textarea><br><br>
     Summary Length:<br>
+
+    <!-- input-box that is linked with the central-API code ("main.py")
+    via the "length"-tag -->
     <input type="summary length" name="length"/><br><br>
+
+    <!-- the button to submit both values to the POST-request of the central-API
+    to the summarization microservice -->
     <input type="submit">
 
 </form>
 
 <br>
 <span class="summary_text">Summary:</span><br>
+    <!-- the final summary is printed here -->
     <span class="summary_print">{{ summary }}</span>
 
 </body>

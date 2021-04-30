@@ -1,8 +1,13 @@
+/* general style-enhancements to the html */
 body {
     background-color: black;
     color: #86BC25
 }
 
+/* changes in font-colour of unique sentences are done
+by putting <span class="NAME"> YOUR SENTENCE </span>
+around the sentence and linking this sentence via its 
+NAME here like ".NAME {...} */
 .some_text {
     color: white
 }
