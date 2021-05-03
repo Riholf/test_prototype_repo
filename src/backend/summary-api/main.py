@@ -19,7 +19,7 @@ class SummaryData(BaseModel):
 
 
 @app.post("/summarization-api/")
-async def create_summary(data: Summary_Data):
+async def create_summary(data: SummaryData):
     """ Create an extractive summarization with text rank algorithm within the gensim package.
 
     Parameters
