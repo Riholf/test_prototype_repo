@@ -7,13 +7,13 @@ import uvicorn
 # with the pydantic basemodel you're able to put data into the body of the request
 from pydantic import BaseModel
 
-# summariztion Package
+# summariztion package
 from gensim.summarization.summarizer import summarize # https://radimrehurek.com/gensim_3.8.3/summarization/summariser.html
 
 app = FastAPI()
 
 # BaseModel with text and ratio to define the expected body in the create_summary function 
-class Summary_Data(BaseModel):
+class SummaryData(BaseModel):
     text: str
     ratio: float
 
